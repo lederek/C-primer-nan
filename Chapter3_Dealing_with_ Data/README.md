@@ -98,6 +98,77 @@ a power of 10.   So 8.33E-4 means 8.33 / 10 4 , or 0.000833.
         if two operators acting  on the same operand have the same precedence, you apply the left-hand operator first.
     2. left-to-right associativity           
         if two operators acting  on the same operand have the same precedence, you apply the right-hand operator first.
+    3, Note that the precedence and associativity rules coome into play only when two operators share the same operand.
+
+### Division Diversions
+The behavior of this operator depends on the type of the operands.  
+
+    1. if both operands are integers, C++ performs integer division. That means any fractional part of the answer is discarded, making the result an integer.   
+    2. if one or both operands are floating-point values, the fractional part is kept, making the result floating-point.  
+    3. // divide.cpp -- integer and floating-point division  
+    4. the result is type double if both operands are double and that it is float if both operands are float.
+    5. Remember, floating-point constants are type double by default.
+
+### Operator Overloading —— OOP property
+C++ use the context——in this case the type of operands——to determine which operator is meant.
+The process of using of using the same symbol for more than one operation is called **operator overloading**. C++ has a few example of overloading built in to the language. you can extend operator overloading to userdefined classes.
+
+### The Modulus Operator
+The modulus operator return the remainder of an integer division.In combination with integer division, the modulus operation is particularly useful in problems that require dividing a quanitity into different integral uints.  
+
+// modulus.cpp -- uses % operator to convert lbs to stone
+
+## Type Conversions
+With 11 integer types and 3 floating-point types, the computer can have a lot of different case to handle, especially if you start mixing types.    
+To help deal with this potential mishmash, C++ makes many type conversions automatically:
+    1. C++ converts values when you assign a value of one arithmetic type to a variable of another arithmetic type.
+    2. C++ converts values when you combine mixed types in expressions.
+    3. C++ converts values when you pass arguments to functions.
+
+### Conversion on Initialization and Assignment
+C++ is fairly liberal in allowing you to assign a numeric value of one type to a variable of another type.Whenever you do so, the value is converted to the type of the receiving variable.
+For example, suppose *so_long* is type **long**, *thirty* is type **short**, and you have the following statement in a program:      
+``` C++
+   so_long = thirty;       // assigning a short to a long
+```  
+1. The program takes the value of *thirty*(typically a 16-bits value) and expands it to a **long** value（typically a 32-bit value) upon making the assignment.   
+2. Assigning a value to a  type with a greater range usually poses no problem. For example, assigning a **short** value to a **long** variable doesn't change the value; it just gives the value of a few more bytes in which to laze about.
+3. However, assigning a large  **long** value such as 2111222333 to a **float** variable results in the loss of some precision.    
+
+4.  | Potential Numeric Conversion Problems ||
+    |    ---    |      ---          |
+    | Conversion Type|  Potential Problems|
+    | Bigger **floating-point** type to smaller **floating-point** type, such as **double** to **float**| Loss of precision (significant figures); value might be out of range for target type, in which case result is undefined|
+    | **Floating-point** type to **integer** type| Loss of fractional part; original value might be out of range for target type, in which case result is underfined |
+    | Bigger **integer** type to smaller **integer** type, such as **long** to **short** | Original value might be out of range for target type; typically just the low-order bytes are copied |
+    |A zero value assigned to a **bool** variable is converted to *false* | a nonzero value is converted to *true* |
+
+5. C++ uses truncation (discarding the fractional part) and not rounding (finding the closest integer value) when converting **floating-point** type.
+
+### Initialization Conversions When {} Are Used (C++11)
+C++11 calls an initialization that uses braces a *list-initialization*. That's because this form can be used more generally to provide lists of values for more complicated data types.
+1. In particular, list-initialization doesn't permit  *narrowing*, which is when the type of the variable may not be able to represent the assignrf value. For example, conversion of floating types to integer types are not allowed. Converting from integer types to other integer types or floating types may be allowed if the compiler can tell if the target variable can hold the value correctly.    
+``` C++
+const int code = 66;
+int x = 66;
+char c1 {31325};        // narrowing, not allowed
+char c2 = {66};         // allowed bacause char can hold 66
+char c3 {code};         // ditto
+char c4 = {x};          // not allowed, x is not constant
+x = 31325;
+char c5 = x;            // allowed by this form of initialization 
+```
+
+### Conversions in Expressions
+
+Consider what happens when you combine two different arithmetic type in one expression.C++ makes two kinds of automatic conversions in that case. 
+1. some types are automatically converted whenever they occur.      
+    When it evaluates expressions, C++ converts **bool**, **char**, **unsigned char**, **signed char**, and **short** values to **int**.
+2. **integral promotions**——some types are converted when thely are combined with other types in an expression.In particullar. *true* is promoted to 1 and false to 0.
+```
+short chicken = 20;
+
+```
 
 
 
