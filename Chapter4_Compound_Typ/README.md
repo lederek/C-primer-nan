@@ -37,4 +37,51 @@
 7. It simly provides a comma-separated list of values(the initialization list) enclosed in braces. 
    1. The space in the list are optional. 
    2. If you don't initialize an array that's defined inside a function, the element values remain undefined.
-   3. That means the element takes on takes on 
+   3. That means the element takes on whatever value previouly resided at that location in memory.     
+   4. Note that if you use the **sizeof** operator with an array name, you get the number of bytes in the whole array. But if you use **sizeof** with an array element, you get the size, in bytes, of the element. 
+
+### initialization Rules for Arrays
+1. You can use the initialization form only when defining the array . You cannot use it later, and you cannot assign one array wholesale to another.
+   ``` C++
+   int cards[4] = {3, 6, 8, 10};    // okay
+   int hand[4];                     // okay
+   hand[4] = {5, 6, 7,  9};         // not allowed
+   hand = cards;                    // not allowed
+   ```
+2. When initializing an array, you can provide fewer values than array elements.
+   ``` C++
+   float hotelTips[5] = {5.0, 2.5};
+   ```
+3. If you partially initialize an array, the compiler sets the remaining elements to **zero**.
+4. Initialize all the elements of an array to **zero** —— just explicitly initialize the first element to **zero** and then let the compiler initialize the remaining elements to zero.
+   ``` C++ 
+   float totals[500] = {0};
+   ```
+5. If you leave the square brackets([]) empty when you initialize an array, the C++ compiler counts the elements for you.
+   ```C++
+   short things[] = {1, 5, 3, 8};
+   // The compiler makes things an array of four elements
+   ```
+6. NOTE: Often , letting the comiler count the number of elements is poor practice because its count can be different from what you think it should be. And if your main concern is that the program, not you, knows how large an array is, you can do something like this:
+      ``` C++
+      short things[] = {1, 5, 3, 8};
+      int num_elements = sizeof things / sizeof(short);
+      ```
+### C++11 Array Initialization
+1. C++11 makes the brace form of initialization(list-initialization) a universal form for all types.
+2. Drop the **=** sign when initializing an array:
+      ```C++
+      double earnings[4] {1.23e4, 1.6e4, 1.1e4, 1.7e4}; // okay with C++11
+      ```
+3. Use empty braces to set all the elements to **0**:
+   ```C++
+   unsigned int counts[10] = {};    // all elements set to 0
+   float balances[100] {};          // all elements set to 0
+   ```
+4. list-initialization protects against narrowing:
+   ```C++
+   long plifs[] = {25, 92, 3.0};       // not allowed
+   char slifs[4] {'h', 'i', 1122011, '\0'};  // not allowed
+   char tlifs[4] {'h', 'i', 112, '\0'};      // allowed
+   ```
+5. The C++ Standard Template Liberary (STL) provides an alternative to arrays called the **vector** template class, and C++11 adds an **array** template class.
