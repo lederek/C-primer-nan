@@ -85,3 +85,23 @@
    char tlifs[4] {'h', 'i', 112, '\0'};      // allowed
    ```
 5. The C++ Standard Template Liberary (STL) provides an alternative to arrays called the **vector** template class, and C++11 adds an **array** template class.
+
+## Strings
+### introduce of string
+1. A **string** is a series of characters stored in consecutive bytes of memory. 
+2. Taken from C and often called a *C-style string*, is the first one this chapter examines.
+   1. The last character of every string is the *null character*. This character, written \0, is the character with ASCII code 0, and it serves to mark the string's end.
+      ```C++
+      char dog[8] = {'b', 'e', 'a', 'u', 'x', ' ', 'I', 'I'};   // not a string!
+      char cat[8] = {'f', 'a', 't', 'e', 's', 's', 'a', '\0'};   // a string
+      ```
+   2. C++ has many functions that handle strings, including those used by **cout**. They all work by processing a string character-by-character until they reach the null character. If you ask **cout** to display a nice string like *cat* in the preceding example, it displays the first seven characters, detects the null character, and stops.
+   3. If you are ungracious enough to tell **cout** to display the *dog* array from the precefing example, which is not a string, **cout** prints the eight letters in the array and then keeps marching through memory byte-to-byte, interpreting each byte as a character to print, until it reaches a null character.
+   4. Use a quoted string, called a **string constant** or **string literal**, as in the following:
+      ```C++
+      char bird[11] = "Mr. Cheeps";       // the \0 is understood
+      char fish[] = "Bubbles";            // let the compiler count
+   5. Quoted strings always include the terminating null character implicitly, so you don't have to spell it out. The various C++ input facilities for reading a string from keyboard input into a **char** array automatically add the terminating null for you.
+   6. you should make sure the array is large enough to hold all the characters of the string, including the null character. Initializing a character array with a string constant is one case where it may be safer to let the compiler count the number of elements for you.
+   7. CAUTION: when determining the minimum array size necessary to hold a string, remember to include the terminating null character in your count.
+   8. 
