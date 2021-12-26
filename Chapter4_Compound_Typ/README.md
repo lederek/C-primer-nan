@@ -104,7 +104,7 @@
 
 ## Strings
 
-### introduce of string
+#### introduce of string
 
 1. A **string** is a series of characters stored in consecutive bytes of memory. 
 2. Taken from C and often called a *C-style string*, is the first one this chapter examines.
@@ -268,7 +268,7 @@ int main()
    
    C++ programs frequently use pointers instead of arrays to handle strings.
 
-## Introducing the **string** Class
+### Introducing the **string** Class
 
  The ISO/ANSI C++98 Standard expanded the C++ library by adding a string class. So now, instead of using a character array to hold a string, you can use a type **string**  variable（or object, to use C++ terminology）.
 
