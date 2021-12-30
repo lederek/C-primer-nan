@@ -20,15 +20,19 @@
 ## Arrays
 
 1. An **array** is a data form that can hold several values, all of one type.
+
 2. To create an array, you use a declaration statement. An array declaration should indicate three things:
+   
    + The type of value to be stored in each element
    + The name of the array
    + The number of elements in the array
+
 3. Accomplish this in C++ by modifying the declaration for a simple variable and adding brackets that contain the number of elements.
    
    ```C++
    short months[12]; // creates array of 12 short elements,each of which can hold a type **short** value
    ```
+
 4. This ia the general form for declaring an array:
    
    ```C++
@@ -37,9 +41,13 @@
    
    The expression *arraySize*, which is the number of elements, must be an integer constant, such as 10 or a **const** value, or a constant expression,for which all values are known at the time compilation takes place.
    In particular, *arraySize* can't be a variable whose value is set while the program is running.
+
 5. You can access **array** elements individually. The way to do this is to use a *subscrpit*, or an *index*, to number the elements.C++ array numbering starts with zero. C++ use a bracket notation with the index to specify an array element. Note that the index of the last element is one less than the size of the array.
+
 6. Thus, an array declaration enables you to create a lot of variables with a single declaration, and you can then use an index to identify and access individual elements.
+
 7. It simly provides a comma-separated list of values(the initialization list) enclosed in braces. 
+   
    1. The space in the list are optional. 
    2. If you don't initialize an array that's defined inside a function, the element values remain undefined.
    3. That means the element takes on whatever value previouly resided at that location in memory.     
@@ -55,23 +63,28 @@
    hand[4] = {5, 6, 7,  9};         // not allowed
    hand = cards;                    // not allowed
    ```
+
 2. When initializing an array, you can provide fewer values than array elements.
    
    ```C++
    float hotelTips[5] = {5.0, 2.5};
    ```
+
 3. If you partially initialize an array, the compiler sets the remaining elements to **zero**.
+
 4. Initialize all the elements of an array to **zero** —— just explicitly initialize the first element to **zero** and then let the compiler initialize the remaining elements to zero.
    
    ```C++
    float totals[500] = {0};
    ```
+
 5. If you leave the square brackets([]) empty when you initialize an array, the C++ compiler counts the elements for you.
    
    ```C++
    short things[] = {1, 5, 3, 8};
    // The compiler makes things an array of four elements
    ```
+
 6. NOTE: Often , letting the comiler count the number of elements is poor practice because its count can be different from what you think it should be. And if your main concern is that the program, not you, knows how large an array is, you can do something like this:
    
    ```C++
@@ -82,17 +95,20 @@
 ### C++11 Array Initialization
 
 1. C++11 makes the brace form of initialization(list-initialization) a universal form for all types.
+
 2. Drop the **=** sign when initializing an array:
    
    ```C++
    double earnings[4] {1.23e4, 1.6e4, 1.1e4, 1.7e4}; // okay with C++11
    ```
+
 3. Use empty braces to set all the elements to **0**:
    
    ```C++
    unsigned int counts[10] = {};    // all elements set to 0
    float balances[100] {};          // all elements set to 0
    ```
+
 4. list-initialization protects against narrowing:
    
    ```C++
@@ -100,6 +116,7 @@
    char slifs[4] {'h', 'i', 1122011, '\0'};  // not allowed
    char tlifs[4] {'h', 'i', 112, '\0'};      // allowed
    ```
+
 5. The C++ Standard Template Liberary (STL) provides an alternative to arrays called the **vector** template class, and C++11 adds an **array** template class.
 
 ## Strings
@@ -107,29 +124,43 @@
 #### introduce of string
 
 1. A **string** is a series of characters stored in consecutive bytes of memory. 
+
 2. Taken from C and often called a *C-style string*, is the first one this chapter examines.
+
 3. The last character of every string is the *null character*. This character, written \0, is the character with ASCII code 0, and it serves to mark the string's end.
    
    ```C++
    char dog[8] = {'b', 'e', 'a', 'u', 'x', ' ', 'I', 'I'};   // not a string!
    char cat[8] = {'f', 'a', 't', 'e', 's', 's', 'a', '\0'};   // a string
    ```
+
 4. C++ has many functions that handle strings, including those used by **cout**. They all work by processing a string character-by-character until they reach the null character. If you ask **cout** to display a nice string like *cat* in the preceding example, it displays the first seven characters, detects the null character, and stops.
+
 5. If you are ungracious enough to tell **cout** to display the *dog* array from the precefing example, which is not a string, **cout** prints the eight letters in the array and then keeps marching through memory byte-to-byte, interpreting each byte as a character to print, until it reaches a null character.
+
 6. Use a quoted string, called a **string constant** or **string literal**, as in the following:
+   
    ```C++
    char bird[11] = "Mr. Cheeps";       // the \0 is understood
    char fish[] = "Bubbles";            // let the compiler count
+   ```
+
 7. Quoted strings always include the terminating null character implicitly, so you don't have to spell it out. The various C++ input facilities for reading a string from keyboard input into a **char** array automatically add the terminating null for you.
+
 8. you should make sure the array is large enough to hold all the characters of the string, including the null character. Initializing a character array with a string constant is one case where it may be safer to let the compiler count the number of elements for you.
+
 9. CAUTION: when determining the minimum array size necessary to hold a string, remember to include the terminating null character in your count.
+
 10. Note that a string constant (with double quotes) is not interchangeable with a character constant (with single quotes). 
+
 11. A character constant, such as 'S', is a shorthand notation for the code for a character. On an ASCII system, 'S' is just another way of writing 83.
     
     ```C++
     char shirt_size = 'S';     // this is fine
     ```
+
 12. "S is not a character constant; it represents the string consisting of two characters, the S and the \0 characters.
+
 13. "S" actually represents the memory address at which the string is stored. So a statement like the following attempts to assign a memory address to *shirt_size*:
     
     ```C++
@@ -181,13 +212,16 @@ For the **istream** class, has some line-oriented class member functions: **getl
 #### Line-Oriented Input with **get()**
 
 1. **get()** , which comes in several variations. It takes the same argumenrs, interprets them the same way, and reads to the end of a line.
+
 2. But rather than read and discard the newline character, **get()** leaves that character in the input queue.
    
    ```C++
    cin.get(name, ArSize);
    cin.get(dessert, ArSize);     // A problem
    ```
+
 3. Because the first call leaves the newline character in the input queue, that newline character is the first character the second call sees. Thus, get() concludes that it's reached the end of line without having found anything to read. Without help, get() just can't get past that newline character.
+
 4. **cin.get()**(with no arguments) reads the single next character, even if it is a newline, so you can use it to dispose of the newline character and prepare for the next line of input.
    
    ```C++
@@ -195,6 +229,7 @@ For the **istream** class, has some line-oriented class member functions: **getl
    cin.get();                    // read newline
    cin.get(deseert, ArSize);     // read second line
    ```
+
 5. Another way to use **get()** is to *concatenate*, or join, the two class member functions, as follows:
    
    ```C++
@@ -202,28 +237,37 @@ For the **istream** class, has some line-oriented class member functions: **getl
    ```
    
    What makes this possible is that **cin.get(name, ArSize)** return the **cin** object, which is then used as the object that invokes the **get()** function.
+
 6. Similarly, the following statement reads two consecutive input lines into the arrays *name1* and *name2*; it's equivalent to making two separate calls to **cin.getline()**:
    
    ```C++
    cin.getline(name1,ArSize).getline(name2, ArSize);
    ```
+
 7. Why use **get()** instead of **getline()** at all? 
+   
    1. older implementations may not have **getline()** .
    2. **get()** lets you be a bit more careful.
+
 8. How can you tell if it read the whole line rather than stopped because the array was filled? Look at the next input character.
+   
    1. If it is a newline character, then the whole line was read.
    2. If it is not a newline character, then there is still more input on that line.
 
 #### Empty Lines and Other Problems
 
 1. The original practice was that the next input statement picked up where the last **getline()** or **get()** left off.
+
 2. The current practice is that after **get()** (but not **getline()**) reads an empty line, it sets something called the *failbit*. The implications of this act are that further input is blocked, but you can restore input with the following command:
    
    ```C++
    cin.clear();
    ```
+
 3. Another potential problem is that the input string could be longer than the allocated space. 
+
 4. If the input line is longer than the number of characters specified, both **getline()** and **get()** leave the remaining characters in the input queue.
+
 5. **getline()** additionally sets the failbit and turns off further input.
 
 ### Mixing String and Numeric Input
@@ -251,8 +295,11 @@ int main()
 ```
 
 1. The problem is that when **cin** reads the year, it leaves the newline generated by the Enter Key in the input queue.
+
 2. Then **cin.getline()** reads the newline as an empty line and assigns a null string to the address array.
+
 3. The fix is to read and discard the newline before reading the address.
+
 4. This can be done several ways, including by using **get()** with a **char** argument or with no argument, as described in the preceding example.
    
    ```C++
@@ -344,7 +391,7 @@ str1 = str2;                    // VAILD, object assignment 
    strcat(site, " of pancakes");       // memory problem
    ```
 
-5.  The **strcat()** function would attempt to copy all 12 characters into the **site** array, thus overrunning adjacent memory. This might cause the program to abort, or the program might continue running but with corrupted data. The **string** class ,with its automatic resizing as necessary, avoids this sort of problem.
+5. The **strcat()** function would attempt to copy all 12 characters into the **site** array, thus overrunning adjacent memory. This might cause the program to abort, or the program might continue running but with corrupted data. The **string** class ,with its automatic resizing as necessary, avoids this sort of problem.
 
 6. The C library does provide cousins to **strcat()** and **strcpy**, called **strncat()** and **strncpy** , that work more safely  by taking a third argument to indicate the maximum allowed size of the target arrays ,  but using them adds another layer of complexity in writing programs.
 
@@ -371,7 +418,7 @@ str1 = str2;                    // VAILD, object assignment 
    char32_t car[] = U"Humber Super Snipe";      // char_32 string
    ```
 
-3.  C++11 also supports an encoding scheme for Unicode characters called UTF-8.
+3. C++11 also supports an encoding scheme for Unicode characters called UTF-8.
 
 4. C++11 addition is the raw string. In a raw string, characters simply stand for themselves. Raw string use "( and )" as delimiters, and they use an **R** prefix to identify them as raw strings:
    
@@ -400,3 +447,117 @@ str1 = str2;                    // VAILD, object assignment 
 6. In short, the default delimiters of "( and )" have been replaced with "+*(   and   )+\*".
 
 7. You can use any of the members of the basic character set as part of the delimiter other than the space, the left parenthesis, the right parenthesis, the backslash, and control chracters such as a tab or a newline.
+
+## Structures
+
+### Introducing Structures
+
+A **structure** is a more versatile data form than an array because a single structure can hold itens of moere than one data.
+
+A structure is a user-definable type, with a structure declaration serving to define the type's data properties. After you define the type , you can create variables of that type.
+
+Creating a structure is a two-part process
+
+        1. you define a structure description that describes and labels the different types of data that can be stored in a structure.
+
+        2. you can create structure variables,  or, more generally, structure data objects, that follow the description's plan.
+
+```C++
+struct tag
+{
+    type name;   // structure members
+    ...
+};                // terminates the structuew declaration
+
+
+// For example, suppose taht Bloataire,Inc.,wants to create a type to 
+// describe  members of its product line of designer inflatable.
+
+struct inflatable        // structure declaration
+{
+    char name[20];
+    float volume;
+    double price;
+}
+```
+
+3. After you have defined the structure, you can create variables of that type: i
+   
+   ```C++
+   inflatable hat;            // hat is a structure variable of type inflatable
+   inflatable woopie_cushion; // type inflatable variable
+   inflatable mainframe;      // type inflatable variable          
+   ```
+
+  4.  C++ allows you to drop the keyword **struct** when you declare structure variables:
+
+```C++
+struct inflatable goose;       // keyword struct rerquired in C
+inflatable vincent;            // keyword struct not required in C++
+```
+
+5. In C++, the structure tag is used just like a fundamental type name. This change emphasizes that a structure declaration defines a new type. It also removes omitting **struct** from the list of curse-inducing errors.
+
+6. You use the membership operator (.) to access individual members.
+
+#### C++11 Structure Initialization
+
+As with arrays, C++11 extends the features of list-initialization.The = sign is optional:
+
+```C++
+inflatable duck {"Daphne", 0.12, 9.98};        // can omit the = in C++11
+```
+
+Empty braces result in the individual members being set to 0.
+
+Narrowing is not allowed.
+
+
+
+### ### Structure Use a **string** Class Member
+
+ Make sure the structure definition has access to the **std** namespace. You can do this by moving the **using** directive so that it is above the structure definition.
+
+### ### Other Structure Properties
+
+C++ makes user-defined types as similar as possible to built-in types. 
+
+    1. You can pass structures as arguments to a function, and you can have a function use a structure as a return value.
+
+2. You can use the assignment operator  (=) to assign one structure to  another of the same type. Doing so causes each member of one structure to be set to the value of the corresponding member in the other structure, even if the member is an array. This kind of assignment is called **memberwise assignment**
+
+3. You can combine the definition of a structure form with the creation of structure variable. To fo so, you follow the closing brace with the variable name or names:
+
+```C++
+struct Perks
+{
+    int key_number;
+    char car[12];   
+}mr_smith, ms_jones;            // two Perks variables
+```
+
+4. You even can initialize a variable you create in this fashion:
+
+```C++
+struct Perks
+{
+    int key_number;
+    char car[12];
+}mr_glitz = 
+{
+    7,        // value for mr_glitz.key_number member
+    "Packard" // value for mr_glitz.car m
+};
+```
+
+5. Another thing you can do with structures is create a structure with no tyoe name. You do this by omitting a tag name while simulataneously defining a structure form and a variable,but you can't subsequently create other variables of the same type:
+   
+   ```C++
+   struct    // no tag
+   {
+       int x;        // 2 members
+       int y
+   }position;        // a structure variable
+   ```
+   
+   
