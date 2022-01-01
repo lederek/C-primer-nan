@@ -617,4 +617,27 @@ inflatable guest[2] =         // initializing an array of structs
       
       
 
-# 
+## Unions
+
+A **Union**is a data format that can hold different data types but only one type at a time.
+
+```C++
+union one4all
+{
+    int int_val;
+    liong long_val;
+    double doule_val;
+};
+```
+
+you can use a *one4all* variable to hold an **int** , a **long**, or a **double**, just as long ad you do  so at different times:
+
+```C++
+one4all pail;
+pail.int_val = 15;        // store an int
+cout << pail.int_val;
+pail.double_val = 1.38;   // store a double, int value is lost
+cout << pail.double_val;  
+```
+
+The member name identifies  the capacity in which the variable is acting. Because a union holds only one value at a time, it has to have space enough to hold its largest member. Hence, the size of the union  is the size of its largest  member.
