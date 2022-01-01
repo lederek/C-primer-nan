@@ -514,11 +514,11 @@ Narrowing is not allowed.
 
 
 
-### ### Structure Use a **string** Class Member
+### Structure Use a **string** Class Member
 
  Make sure the structure definition has access to the **std** namespace. You can do this by moving the **using** directive so that it is above the structure definition.
 
-### ### Other Structure Properties
+### Other Structure Properties
 
 C++ makes user-defined types as similar as possible to built-in types. 
 
@@ -560,4 +560,61 @@ struct Perks
    }position;        // a structure variable
    ```
    
+   #### Arrays of Structures
    
+   The *inflatable* structure contains an array (the *name* array). It's also possible to create arrays whose elements are structures. The technique is exactly the same as for creating arrays of the fundamental types.
+   
+   ```C++
+   inflatable gifts[100];        // array of 100 inflatable structures
+   ```
+   
+   This makes *gifts* an array of *inflatables*. Hence each element of the array , such as *gifts[0]* or *gifts[99]*, is an *inflatable* object and can be used with the membership operator:
+   
+   ```C++
+   cin >> gifts[0].volume;        // use volume member of first struct
+   cout << gifts[99].price << endl;// display price member of last struct
+   ```
+   
+   Keep in mind that *gifts* itself is an array, not a structure, so constructions such as *gifts.price* are not valid.
+
+       To initialize an array of structures, you combine the rule for initializing arrays (a brace-enclosed, comma-separated list of values for each element)  with the rule for structures(a brace-enclosed, comma-separated list of values for each member)
+
+```C++
+inflatable guest[2] =         // initializing an array of structs
+{
+    {"Bambi", 0.5, 21.99},    // first structure in array
+    {"Godzilla", 2000, 565.99}// next structure in array
+};
+```
+
+### Bit Field in Structures
+
+1. C++ enable you to specify structure members that occupy a particular number of bits. This can  be handy for creating  a data structure that correponds,  say , to  a register on some hardware device.
+
+2. The field type should be an integral or enumeration type , and a colon followed by a number indicates the actual number of bits to be used. 
+
+3. You can use unnamed field to provide spacing. Each member is  termed  *a bit field*.
+   
+   ```C++
+   struct torgle_register
+   {
+       unsigned int SN : 4;        // 4 bits for SN value
+       unsigned int : 4;           // 4 bits unused
+       bool goodIn  : 1;           // valid input (1 bit)
+       bool goodTorgle : 1;        // successful torgling
+   }
+   ```
+   
+   4. You can initialize the fields in the usual manner, and you use standard structure notation to access bit fields:
+      
+      ```C++
+      torgle_register tr = { 14, true, false };
+      ...
+      if(tr.goodIn)        
+      ```
+      
+      Bit fields are typically used in low-level programming.
+      
+      
+
+# 
