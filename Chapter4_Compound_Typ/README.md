@@ -617,9 +617,9 @@ inflatable guest[2] =         // initializing an array of structs
       
       
 
-## Unions
+# Unions
 
-A **Union**is a data format that can hold different data types but only one type at a time.
+1. A **Union**is a data format that can hold different data types but only one type at a time.
 
 ```C++
 union one4all
@@ -640,4 +640,78 @@ pail.double_val = 1.38;   // store a double, int value is lost
 cout << pail.double_val;  
 ```
 
-The member name identifies  the capacity in which the variable is acting. Because a union holds only one value at a time, it has to have space enough to hold its largest member. Hence, the size of the union  is the size of its largest  member.
+2. The member name identifies  the capacity in which the variable is acting. Because a union holds only one value at a time, it has to have space enough to hold its largest member. Hence, the size of the union  is the size of its largest  member.
+
+3. One use of a union is to save space  when a data item can use two or more formats but never simultaneously.
+
+```C++
+struct widget
+{
+    char brand[20];
+    int type;
+    union id                 // format depends on widget type
+    {
+        long id_num;        // type 1 widgets
+        char id_char[20];   // other widgets
+    }id_val;
+};
+...
+widget prize;
+...
+if(price.type == 1)                    
+    cin >> prize.id_val.id_num;        // use member name to indicate mode
+else
+    cin >> prize.id_val.id_char;
+```
+
+4. An *anonymous union* has no name; in essence,  its members become variable that share the same address. Naturally, only one member can be current at a time:
+   
+   ```C++
+   struct widget
+   {
+       char brand[20];
+       int type;
+       union                    // anonymous union
+       {
+           long id_num;        // type 1 widgets
+           char id_char[20];   // other widgets  
+       };
+   };
+   ...
+   widget prize;
+   ...
+   if(prize.type == 1)
+       cin >> prize.id_num;
+   else
+       cin >> prize.id_char;
+   ```
+
+Because the union is anonymous, *id_num* and *id_char_*are treated as two members of prize* that  share the same address.  The need for an intermediate identifier *id_val_*  is  eliminated. It is up to the programmer to keep track of which choice is active.
+
+6. Unions often (but not exclusively) are used to save memory space.
+
+
+
+# Enumerations
+
+1. The C++ **enum** facility provides an alternative to **const** for creating symbolic constants.
+
+2. It also lets you define new types but in a fairly restricted fashion
+   
+   ```C++
+   enum spectrum{red, orange, yellow, green, blue, violet, indigo, ultraviolet);
+   ```
+   
+   1. It makes *spectrum* the name of a new type; *spectrum* is termed an *enumeration* much as a **struct** variable is called a structure.
+   
+   2. It establishes *red*, *orange*, and so on, as symbolic constants for the integer values 0-7. These constants are called *enumerators*
+
+3. By default, enumerators are assigned integer values starting with 0 for the first enumarator.
+
+4. You can use an enumeration name to declare a variable of the enumeration type:
+   
+   ```cpp
+   spectrum band;        // band a variable of type spectrum
+   ```
+   
+   
