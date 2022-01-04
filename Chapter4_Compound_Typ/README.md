@@ -713,5 +713,157 @@ Because the union is anonymous, *id_num* and *id_char_*are treated as two member
    ```cpp
    spectrum band;        // band a variable of type spectrum
    ```
+ 5. The only valid values that you can assign to an enumeration variable without a type cast are the enumerator values used in defining the type.
+   ``` CPP
+      band = blue;      // valid, blue is an enumerator
+      band = 2000;      // invalid, 2000 not an enumerator 
+   ```
+6. Only the assignment operator is defined for enumerations. In particular, arithmetic operations are not defined:
+   ```C++
+   band = orange;          // valid
+   ++band;                 // not valid 
+   band = orange + red;    // not valid, but a little tricky
+   ```
+7. Enumerators are of integer type and can be promoted to type **int**, but **int** types are not converted automatically to the enumeration type.
+8. You can assign an **int** value to an **enum**, provided that the value is valid and that you use an explicit type cast:
+   ```C++
+   band = spectrum(3);              // typecast 3 to type spectrum
+   ```
+## Setting Enumerator Values
+1. You can set enumerator values explicitly by using the assignment operator:
+   ```C++
+   enum bits{one = 1, two = 2, four = 4, eight = 8};
+   ```
+2. The assigned values must be integers. You also can define just some of the enumerators explicitly:
+   ```C++
+   enum bigstep{fiest, second == 100, third};
+   ```
+   In this case, *first* is 0 by default. Subsequent uninitialized enumerators are larger by one than their predecessors. So, *third* would have the value 101.
+3. You can create more than one enumerator with the same value:
+   ```C++
+   enum{zero, null = 0, one, numero_uno = 1};
+   // both zero and null are 0, and both one and numero_uno are 1/
+   ```
+4. In earlier version of C++ , you could assign only **int** values (or values that promote to **int**) to enumerators, but now you can use type **long** and **long long** values.   
+
+
+## Value Ranges for Enumerations
+C++ has expanded the list of valid values that can be assigned to an enumeration variable through the use of a type cast.Each enumeration has a range, and you can
+assign any integer value in the range, even if it’s not an enumerator value, by using a type cast to an enumeration variable.
+
+
+# Pointers and the Free Store
+1. **Pointer**——holds the address of a value. 
+   1. the name of the pointer represents the location
+   2. applying the * operator, called the **indirect value** or the **dereferencing** operator, yields the value at the location.
    
+## Declaring and Initializing Pointers
+1. A computer needs to keep track of the type of value to which a pointer refers. For example, the address of a char typically looks the same as the address of a double, but char and double use different numbers of bytes and different internal formats for storing values。
+2. This states that the combination *\*p_updates* is type **int**. Because you use the * operator by applying it to a pointer, the  *p_uodates* variable itself must be a pointer.     
+   ```C++
+   int* updates;
+   ```
+   1. *p_updates* points to type **int**;
+   2. the type for *p_updates* is pointer-to-int, or, more concisely,**int \***;
+   3. *p_updates* is a pointer (an address)， and *\*p_updates* is an **int** and not a pointer 
+
+3. The following declaration creates one pointer （p1) and one ordinary **int**(p2):
+   ```C++
+   int* p1, p2;
+   ```
+   YOu need an * for each pointer variable name.
+4. You can use a declaration statement to initialize a pointer. In that case, the pointer, not the pointed-to value, is initialized .
+
+## Pointer Danger
+When you create a pointer in C++, the computer allocates memory to hold an address, but it does not allocate memory to hold the data to which the address points.     
+   ```C++
+   long* fellow;        // create a pointer-to-long
+   *fellow = 223323;    // place a value in never-never land
+   ```
+Because *fellow* wasn't initialized, it could have any value. Whatever that value is, the program interprets it as the address at which to store 223323
+
+**Caution**
+Pointer Golden Rule: Always initialize a pointer to a definite and appropriate address before you apply the dereferencing operator (*) to it.
+
+## Pointers and Numbers
+1. Pointers are not integer types, even though computers typically handle addresses as integers. 
+2. Pointers are distinct types from integers.        
+   1. Integers are numbers you can add, subtract, divide, and so on.
+   2. A pointer describes a location, and it doesn't make sense.
+3. you can't simply assign an integer to a pointer.
+   1. the left side is a pointer to **int**, but the right side is just an integer, nothing in the statement tells the program that this number is an address:
+      ```C++
+      int* pt;
+      pt = 0xB8000000;     // type mismatch
+      ```
+   2. IF you want to use a numeric value as an address, you should use a type cast to convert the number to the appropriate address type:
+      ```C++
+      int* pt;
+      pt = (int* )0xB8000000;    // type now match 
+      ```
+   3. Now both sides of the assignment statement  represent address of integers, so the assignment is valid. Note that just because it is the address of a type **int** value doesn't mean that pt itself is type **int**. For example, one might have a platform for which type **int** is a 2-byte value and the addresses are 4-byte values.
    
+## Allocating Memory with new
+1. The variables are named memory allocated during compile time, and each pointer merely provides an alias for memory you could access directly by name anyway.
+2. The true worth of pointers comes into play when you allocate unnamed memory during runtime to hold values.
+3. In C, you can allocate memory with the library function **malloc()**. You can still do so in C++, but C++ also has a better way: the **new** operator.
+4. this **new** technique by creating unnamed runtime storage for a type **int** value and accessing the value with a pointer.The key is the C++ **new** operator.You tell **new** for what data type you want memory; **new** finds a block of the correct size and returns the address of the block.You assign this address to a pointer, and you’re in business.
+   ```C++
+   int* pn = new int;
+   ```
+5. The **new int** part tells the program you want some new storage suitable for holding an **int**. The **new** operator uses the type to figure out how many bytes are needed. Then it finds the memory and return the address. Next, you assign the address to *pn*, which is declared to be of type pointer-to-int. 
+6. Compare with assigning the address of a variable to a pointer:
+   ```C++
+   int higgens;
+   int* pt = &higgens;
+   ```
+   In both cases(*pn* and *pt*), you assign the address of an **int** to pointer. We say that *pn* points to *a data object*, it means any block of memory allocated for a data item.
+7. The general form for obtaining and assigning memory for a single data object, which can be a struct as well as a fundamental type
+   ```C++
+   typeName* pointer_name = new typeName;
+   ```
+8. You use the data type twice: once to specify the kind of memory requested and once to declare a suitable pointer. Of course, if you’ve already declared a pointer of the correct type, you can use it rather than declare a new one .
+9. Program Notes
+    ```C++
+      // use_new.cpp -- using the new operator
+      #include<iostream>
+      int main()
+      {
+         using namespace std;
+         int nights = 1001;
+         int* pt = new int;              // allocate space for an int
+         *pt = 1001;                     // store a value there
+
+         cout << "nighs value = ";
+         cout << nights << ": location " << &nights << endl;
+         cout << "int ";
+         cout << "value = " << *pt << ": location = " << pt << endl;
+
+         double* pd = new double;        // allocate space for a double
+         *pd = 10000001.0;               // store a double there
+
+         cout << "double ";
+         cout << "value = " << *pd << ": location = " << pd << endl;
+         cout << "location of pointer pd: " << &pd << endl;
+         cout << "size of pt = " << sizeof(pt);
+         cout << ": size of *pt = " << sizeof(*pt) << endl;
+         cout << "size of pd = " << sizeof pd;
+         cout << ": size of *pd = " << sizeof(*pd) << endl;
+         return 0;
+      }
+    ```
+   1. The program uses **new** to allocate memory for the type **int** and type **double** data object. 
+   2. This occurs while the program is running.
+   3. The pointers *pt* and *pd* point to these two data objects.
+   4. Without them, you cannot access those memory locations.
+   5. With them, you can use *\*pt* and *\*pd* just as you would use variables.
+   6. You  assign values to *\*pt* and *\*pd*  to assign values to the **new** data object.Similarly, you print *\*pt* and *\*pd* to display those values.
+   7. Demonstrates one of the reasons you have to declare the type a pointer points to. An address in itself reveals only the beginning address of the object stored, not its type or the number of bytes used.
+   8. Look at the addresses of the two values.They are just numbers with no type or size information.
+   9. Also note that the size of a pointer-to-**int** is the same as the size of a pointer-to-**double**,both are just addresses.
+   10. *use_new.cpp* declares the pointer type, the program knows that *\*pd* is a **double** value of 8 bytes, whereas *\*pt* is an **int** value of 4 bytes.
+   11. The ordinary variables have their values stored in a memory region called the **stack**, whereas the memory allocated by **new** is in a region called the **heap** or **free store**. 
+> **Out of Memory**     
+> It's possible that a computer might not have sufficient memory available to satisfy a **new** request. When that is the case , **new** normally responds by throwing an exception, an error-handing technique.    
+> In older implementation **new** return the value 0. In C++, a pointer with the value 0 is called the *null* pointer.    
+> C++ guarantees that the null pointer never points to valid data, so it is often used to indicate failure for operators or functions that otherwise return usable pointers.
