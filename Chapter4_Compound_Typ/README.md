@@ -866,4 +866,57 @@ Pointer Golden Rule: Always initialize a pointer to a definite and appropriate a
 > **Out of Memory**     
 > It's possible that a computer might not have sufficient memory available to satisfy a **new** request. When that is the case , **new** normally responds by throwing an exception, an error-handing technique.    
 > In older implementation **new** return the value 0. In C++, a pointer with the value 0 is called the *null* pointer.    
-> C++ guarantees that the null pointer never points to valid data, so it is often used to indicate failure for operators or functions that otherwise return usable pointers.
+> C++ guarantees that the *null* pointer never points to valid data, so it is often used to indicate failure for operators or functions that otherwise return usable pointers.
+
+## Freeing Memory with delete
+1. The **delete** operator, which enables you to return memory to the memory pool when you are finished with it.Memory that you return, or **free**, can then be reused by other parts of the program.You use **delete** by following it with a pointer to a block  of memory originally allocated with **new**:
+   ```C++
+   int *ps = new int;         // allocate memory with new
+   ...
+   delete ps;                // free memory with delete when done
+   ```
+   This removes the memory to which *ps* points; it doesn't remove the pointer *ps* itself.You can reuse *ps* , for example ,to point to another **new** allocation.  
+2. You should always balance a use of **new** with a use of **delete**;Otherwise, you can wind up with a *memory leak* —— memory has been allocated but can no longer be used .If a memory leak grows too large, it can bring a program seeking more memory to a halt.
+3. You should not attempt to free a block of memory that you have previously freed.The C++ Standard says the result of such an attempt is undefined , meaning that the consequences could be anything.
+4. You cannot use **delete** to free memory created by declaring ordinary variable
+   ```C++
+   int *ps = new int;      // ok
+   delete ps;              // ok
+   delete ps;              // not ok now
+   int jugs = 5;           // ok
+   int *pi  = &jugs;       // ok
+   delete pi;              // not allowed, memory not allocated by new
+   ```
+>Caution
+>You should use **delete** only to free memory allocated with **new**. However, it is safe to apply >**delete** to a null pointer. 
+5. Note that the critical requirement for using **delete** is to use it with memory allocated by **new**.This doesn't mean you have to use the same pointer you used with **new**; instead, you have to use the same address:
+   ```C++
+   int *ps = new int;            // allocate memory
+   int *pq = ps;                 // set second pointer to same block
+   delete pq;                    // delete with second pointer
+   ```
+   Ordinarily, you won't create two pointers to the same block of memory because that raises the possibility that you will mistakenly try to delete the same block twice.
+
+## Using new to Create Dynamic Arrays
+1. Allocating the array during compile time is called *static binding* , meaning that the array is built in to the program at compile time. 
+2. With **new** ,you can create an array during runtime if you need it and skip creating the array if you don't need it. Or you can select an array size after the program is running.This is called *dynamic binding*, meaning that the array is created while the program is running.Such an array is called a *dynamic array*.
+3. With static binding, you must specify the array size when you write the program/
+4. With dynamic binding, the program can decide on an array size while the program runs.
+
+### Creating a Dynamic Array with new
+1. you tell **new** the type of array element and number of elements you want.The syntax requires that you follow the type name with the number of elements, in brackets.
+   ```C++
+   int *psome = new int[10];           // get a block of 10 ints
+  ```
+  The **new** operator returns the address of the first element of the block.
+2. When freeing the array:
+   ```C++
+   delete [] psome;                    // free a dynamic array
+   ```
+   The presence of the brackets tells the program that it should free the whole array, not just the element pointed to by the pointer.
+3. Note that the brackets are between **delete** and the pointer. If you use **new** without brackets, you should use **delete** without brackets.If you use **new** with brackets, you should use **delete** with bracket.
+   ```C++
+   int *pt = new int;
+   short *ps = new short[500];
+   delete [] pt;      // effect is undefined, don't do it
+   delete ps;         // effect is undefined, don't do it
