@@ -27,3 +27,9 @@
 + The end-of-file condition
 
 + Nested loops and two-dimensional arrays
+
+
+
+## Introducing for Loops
+
+Circumstances often call on a program to perform repetitive tasks
