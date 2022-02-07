@@ -762,8 +762,6 @@ void rect_to_polar(const rect * pxy,polar * pda)
    3: Kaboom!
    4: Kaboom!
    ```
-   
-   
 
 ### 包含多个递归调用的递归
 
@@ -814,8 +812,6 @@ vide(ar, mid, high, level - 1);
 // 最初的中点被用作一次调用的右端点和另一次调用的左端点
 // 调用次数将呈几何级数增长
 ```
-
-
 
 ## 函数指针
 
@@ -1024,7 +1020,7 @@ pf = ted;       // invalid -- mismatched return types
     **&pa == *pa == pa[0]
     ```
 
-### 使用typedef进行缉拿话
+### 使用typedef进行简化
 
 关键字**typedef** 能够创建类型别名：
 
