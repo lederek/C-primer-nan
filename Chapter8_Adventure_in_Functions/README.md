@@ -18,7 +18,7 @@
 
 ## C++内联函数
 
-1.  内联函数是C++为提高程序运行速度所做的一项改进。
+1. 内联函数是C++为提高程序运行速度所做的一项改进。
 
 2. 常规函数和内联函数的主要区别：C++编译器如何将它们组合到程序中
 
@@ -282,7 +282,6 @@ double reference(double &ra)
 > + 使用const 使函数能够处理const和非const实参，否则将只能接受非const数据；
 > 
 > + 使用const 引用使函数能够正确生成并使用临时变量
->   
 > 
 > C++11 新增——右值引用（rvalue reference)。这种引用可指向右值，是使用&&声明：
 > 
@@ -293,8 +292,6 @@ double reference(double &ra)
 > std::cout << rref << '\n';          // display 6.0
 > std::cout << jref << '\n';          // display 48.5;
 > ```
-
-
 
 ### 将引用用于结构
 
@@ -310,21 +307,259 @@ double reference(double &ra)
        int attempts;
        float percent;
    }
-   
-   
    ```
-   
-   则可以这样编写函数原型，在函数中将指向该结构的引用作为参数：
-   
-   ```cpp
-   void set_pc(free_throws & ft);  // use a reference to a structure
-   ```
-   
+
+```
+则可以这样编写函数原型，在函数中将指向该结构的引用作为参数：
+
+```cpp
+void set_pc(free_throws & ft);  // use a reference to a structure
+```
+
    如果不希望函数修改传入的结构，可使用const：
+
+```cpp
+void display(const free_throws & ft);// don't allow changes to structure
+```
+
+3. 返回引用
    
    ```cpp
-   void display(const free_throws & ft);// don't allow changes to structure
+   accumulate(dup, five) = four;
+   // 这条语句将值赋给函数调用，这是可行的，因为函数的返回值是一个引用。
+   // 如果函数accumulate()按值返回，将不能通过编译
+   // 上述代码与下面的代码等效：
+   accumulate(dup,five);  // add five's data to dup
+   dup = four; // overwrite the contents of dunps 
+               // with the contents of four
    ```
+   
+   在返回值为引用时，将直接把team复制到dup,其效率更高；
+   
+   返回引用的函数实际上是被引用的变量的别名；
+   
+   返回引用时应避免返回函数终止时不再存在的内存单元引用（如指向临时变量的引用，函数运行完毕后它将不再存在）
+   
+   同样应避免返回指向临时变量的指针
+   
+   为避免这种问题，应返回一个作为参数传递给函数的引用。作为参数的引用将指向调用函数的数据，因此返回的引用也将指向这些数据
+
+4. 另一个方法是用**new**来分配新的存储空间。前面见过这样的做法，它使用new为字符串分配内存空间，并返回指向该内存空间的指针。下面是使用引用来完成类似的工作：
+   
+   ```Cpp
+   const free_throws & clone(free_throws & ft)
+   {
+       free_thorws * pt;
+       *pt = ft;     // copy info
+       return ft;    // return reference to copy
+   }
+   ```
+   
+   第一条语句创建一个无名的free_throws结构，并让指针pt指向该结构，因此*pt就是该结构。上述代码似乎会返回该结构，但函数声明表明，该函数实际上将返回这个结构的引用。
+   
+   ```cpp
+   free_throws & jolly = clone(three);
+   // 这使得jolly成为新结构的引用
+   ```
+
+5. 这种方法存在一个问题：在不需要new分配的内存时，应使用delete来释放它们。调用clone()隐藏了对new的调用，这使得很容易忘记使用delete来释放内存
+
+6. 假如要使用引用返回值，但又不允许执行像给accumulate()赋值这样的操作，只需将返回类型声明为const引用：
+   
+   ```cpp
+   const free_throws & accumulate(free_throws & target, const free_throws & source);
+   ```
+   
+   现在返回类型是const，是不可修改的左值
+
+### 将引用用于类对象
+
+1. 将类对象传递给函数时，C++通常的做法是使用引用
+   
+   ```cpp
+   // strquote.cpp -- different design
+   #include<iostream>
+   #include<string>
+   using namespace std;
+   string version1(const string & s1, const string & s2);
+   const string & version2(string & s1, const string & s2);// has side effect
+   const string & version3(string & s1, const string & s2);// bad design
+   
+   int main()
+   {
+       string input;
+       string copy;
+       string result;
+   
+   
+       cout << "Enter a string: ";
+       getline(cin,input);
+       copy = input;
+       cout << "Your string as entered: " << input << endl;
+       
+       result = version1(input, "***");
+       cout << "Your string enhanced: " << result << endl;
+       cout << "Your original string: " << input << endl;
+   
+       result = version2(input, "***");
+       cout << "Your string enhanced: " << result << endl;
+       cout << "Your original string: " << input << endl;
+   
+       cout << "Resetting original string.\n";
+       input = copy;
+       result = version3(input, "@@@");
+       cout << "Your string enhanced: " << result << endl;
+       cout << "Your origianl string: " << input << endl;
+       
+       return 0;
+   }
+   
+   string version1(const string & s1, const string & s2)
+   {
+       string temp;
+   
+       temp = s2 + s1 + s2;
+       return temp;
+   }
+   
+   const string & version2(string & s1, const string & s2) // has side effect
+   {
+       s1 = s2 + s1 + s2;
+       // safe to return reference passed to function
+       return s1;
+   }
+   
+   const string & version3(string & s1, const string & s2) // bad design
+   {
+       string temp;
+   
+       temp = s2 + s1 + s2;
+       // unsafe to return reference to local variable
+       return temp;
+   }
+   ```
+
+2. s1是指向main()中一个对象（input)的引用，因此将s1作为引用返回是安全的。由于s1是指向input的引用，调用该函数将带来修改input的副作用。如果要保留原来的字符串不变，这将是一种错误设计。
+
+3. version3存在一个致命缺陷：返回一个指向version3()中声明的变量的引用。这个函数能够通过编译（但编译器会发出警告），但当程序试图执行该函数时将崩溃。具体地说，程序试图引用已经释放的内存temp。
+
+### 对象、继承和引用
+
+1. ostream 和ofstream类凸显了引用的一个有趣属性。ofstream对象可以使用ostream类的方法，这使得文件输入/输出的格式与控制台输入/输出相同。**使得能够将特性从一个类传递给另一个类的语言特性被称为继承**。派生类继承了基类的方法，这意味着派生类对象可以使用基类的特性。
+
+2. 继承的另一个特征是，基类引用可以指向派生类对象，而无需进行强制类型转换。这种特征的一个实际结果，可以定义一个接受基类引用作为参数的函数，调用该函数时，可以将基类对象作为参数，也可以将派生类对象作为参数。
+   
+   ```cpp
+   
+   // filefunc.cpp -- function with ostream & parameter
+   #include<iostream>
+   #include<fstream>
+   #include<cstdlib>
+   
+   using namespace std;
+   
+   void file_it(ostream & os, double fo, const double fe[], int n);
+   const int LIMIT = 5;
+   
+   int main()
+   {
+       ofstream fout;
+       const char* fn = "ep-data.txt";
+       fout.open(fn);
+       if (!fout.is_open())
+       {
+           cout << "Can't open " << fn << ". Byte.\n";
+           exit(EXIT_FAILURE);
+       }
+       double objective;
+       cout << "Enter the focal length of your "
+               "telescope objective in mm: ";
+       cin >> objective;
+       double eps[LIMIT];
+       cout << "Enter the focal lengths, in mm, of " << LIMIT
+            << " eyepieces:\n";
+       for (int i = 0; i < LIMIT; i++)
+       {
+           cout << "Eyepiece #" << i + 1 << ": ";
+           cin >> eps[i];
+       }
+       file_it(fout, objective, eps, LIMIT);
+       file_it(cout, objective, eps, LIMIT);
+       cout << "Done\n";
+       return 0;
+   }
+   
+   void file_it(ostream & os, double fo, const double fe[], int n)
+   {
+       ios_base::fmtflags initial;
+       initial = os.setf(ios_base::fixed); // save initial formatting state
+       os.precision(0);
+       os << "Focal length of objective: " << fo << " mm\n";
+       os.setf(ios::showpoint);
+       os.precision(1);
+       os.width(12);
+       os << "f.1. eyepiece";
+       os.width(15);
+       os << "magnification" << endl;
+       for (int i = 0; i < n; i++)
+       {
+           os.width(12);
+           os << fe[i];
+           os.width(15);
+           os << int (fo/fe[i] + 0.5) << endl;
+       }
+       os.setf(initial);   // restore initial formatting state
+   }
+   ```
+
+3. 方法setf()能够设置各种格式化状态，
+   
+   + setf(ios_base::fixed)将对象置于使用定点表示法的模式；
+   
+   + setf(ios_base::showpoint)将对象置于显示小数点的模式，即使小数部分为零
+   
+   + 方法precision() 指定显示多少位小数(假定对象处于定点模式下)
+
+4. 所有这些设置将一直保持不变，直到再次调用相应的方法重新设置他们
+
+5. 方法width()设置下一次输出操作使用的字段宽度，这种设置只在显示下一个值时有效，然后将恢复到默认设置。默认字段宽度为零，这意味刚好能容纳下要显示的内容。
+
+6. ```cpp
+   ios_base::fmtflags initial;
+   initial = os.setf(ios_base::fixed); // save initial formatting state
+   ...
+   os.setf(initial);   // restore initial formatting state
+   ```
+   
+   方法setf()返回调用它之前有效的所有格式化设置。ios_baseL::fmtflags是存储这种信息所需的数据类型的名称。因此，将返回值赋给initial将存储调用file_it()之前的格式化设置，然后便可以使用变量initial作为参数来调用setf(), 将所有的格式化设置恢复到原来的值。因此，该函数将对象回到传递给file_it()之前的状态。
+
+### 何时使用引用参数
+
+1. 使用引用参数的主要原因有两个：
+   
+   + 程序员能够修改调用函数中的数据对象
+   
+   + 通过传递引用而不是整个数据对象，可以提高程序的运行速度（尤其当数据对象较大时）
+
+2. 何时使用引用或指针：
+   
+   + 如果数据对象很小，如内置数据类型或小型结构，则按值传递
+   
+   + 如果数据对象是数组，则使用指针，并将指针声明为指向const的指针
+   
+   + 如果数据对象是较大的结构，则使用const指针或const引用，以提高程序的效率，可以节省复制结构所需的时间和空间
+   
+   + 如果数据对象是类对象，则使用const引用。类设计的语义常常要求使用引用，传递类对象参数的标准方式是按引用传递
+
+3. 对于修改调用函数中数据的函数：
+   
+   + 如果数据对象是内置数据类型，则使用指针。
+   
+   + 如果数据对象是数组，则只能使用指针
+   
+   + 如果数据对象是结构，则使用引用或指针
+   
+   + 如果数据对象是类对象，则使用引用
 
 ## 默认参数
 
