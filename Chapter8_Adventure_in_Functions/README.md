@@ -390,7 +390,7 @@ void display(const free_throws & ft);// don't allow changes to structure
        string input;
        string copy;
        string result;
-   
+   ```
    
        cout << "Enter a string: ";
        getline(cin,input);
@@ -400,11 +400,11 @@ void display(const free_throws & ft);// don't allow changes to structure
        result = version1(input, "***");
        cout << "Your string enhanced: " << result << endl;
        cout << "Your original string: " << input << endl;
-   
+       
        result = version2(input, "***");
        cout << "Your string enhanced: " << result << endl;
        cout << "Your original string: " << input << endl;
-   
+       
        cout << "Resetting original string.\n";
        input = copy;
        result = version3(input, "@@@");
@@ -412,33 +412,40 @@ void display(const free_throws & ft);// don't allow changes to structure
        cout << "Your origianl string: " << input << endl;
        
        return 0;
+   
    }
    
    string version1(const string & s1, const string & s2)
    {
-       string temp;
    
+       string temp;
+       
        temp = s2 + s1 + s2;
        return temp;
+   
    }
    
    const string & version2(string & s1, const string & s2) // has side effect
    {
+   
        s1 = s2 + s1 + s2;
        // safe to return reference passed to function
        return s1;
+   
    }
    
    const string & version3(string & s1, const string & s2) // bad design
    {
-       string temp;
    
+       string temp;
+       
        temp = s2 + s1 + s2;
        // unsafe to return reference to local variable
        return temp;
+   
    }
-   ```
 
+```
 2. s1是指向main()中一个对象（input)的引用，因此将s1作为引用返回是安全的。由于s1是指向input的引用，调用该函数将带来修改input的副作用。如果要保留原来的字符串不变，这将是一种错误设计。
 
 3. version3存在一个致命缺陷：返回一个指向version3()中声明的变量的引用。这个函数能够通过编译（但编译器会发出警告），但当程序试图执行该函数时将崩溃。具体地说，程序试图引用已经释放的内存temp。
@@ -448,69 +455,69 @@ void display(const free_throws & ft);// don't allow changes to structure
 1. ostream 和ofstream类凸显了引用的一个有趣属性。ofstream对象可以使用ostream类的方法，这使得文件输入/输出的格式与控制台输入/输出相同。**使得能够将特性从一个类传递给另一个类的语言特性被称为继承**。派生类继承了基类的方法，这意味着派生类对象可以使用基类的特性。
 
 2. 继承的另一个特征是，基类引用可以指向派生类对象，而无需进行强制类型转换。这种特征的一个实际结果，可以定义一个接受基类引用作为参数的函数，调用该函数时，可以将基类对象作为参数，也可以将派生类对象作为参数。
-   
-   ```cpp
-   
-   // filefunc.cpp -- function with ostream & parameter
-   #include<iostream>
-   #include<fstream>
-   #include<cstdlib>
-   
-   using namespace std;
-   
-   void file_it(ostream & os, double fo, const double fe[], int n);
-   const int LIMIT = 5;
-   
-   int main()
-   {
-       ofstream fout;
-       const char* fn = "ep-data.txt";
-       fout.open(fn);
-       if (!fout.is_open())
-       {
-           cout << "Can't open " << fn << ". Byte.\n";
-           exit(EXIT_FAILURE);
-       }
-       double objective;
-       cout << "Enter the focal length of your "
-               "telescope objective in mm: ";
-       cin >> objective;
-       double eps[LIMIT];
-       cout << "Enter the focal lengths, in mm, of " << LIMIT
-            << " eyepieces:\n";
-       for (int i = 0; i < LIMIT; i++)
-       {
-           cout << "Eyepiece #" << i + 1 << ": ";
-           cin >> eps[i];
-       }
-       file_it(fout, objective, eps, LIMIT);
-       file_it(cout, objective, eps, LIMIT);
-       cout << "Done\n";
-       return 0;
-   }
-   
-   void file_it(ostream & os, double fo, const double fe[], int n)
-   {
-       ios_base::fmtflags initial;
-       initial = os.setf(ios_base::fixed); // save initial formatting state
-       os.precision(0);
-       os << "Focal length of objective: " << fo << " mm\n";
-       os.setf(ios::showpoint);
-       os.precision(1);
-       os.width(12);
-       os << "f.1. eyepiece";
-       os.width(15);
-       os << "magnification" << endl;
-       for (int i = 0; i < n; i++)
-       {
-           os.width(12);
-           os << fe[i];
-           os.width(15);
-           os << int (fo/fe[i] + 0.5) << endl;
-       }
-       os.setf(initial);   // restore initial formatting state
-   }
-   ```
+
+```cpp
+
+// filefunc.cpp -- function with ostream & parameter
+#include<iostream>
+#include<fstream>
+#include<cstdlib>
+
+using namespace std;
+
+void file_it(ostream & os, double fo, const double fe[], int n);
+const int LIMIT = 5;
+
+int main()
+{
+    ofstream fout;
+    const char* fn = "ep-data.txt";
+    fout.open(fn);
+    if (!fout.is_open())
+    {
+        cout << "Can't open " << fn << ". Byte.\n";
+        exit(EXIT_FAILURE);
+    }
+    double objective;
+    cout << "Enter the focal length of your "
+            "telescope objective in mm: ";
+    cin >> objective;
+    double eps[LIMIT];
+    cout << "Enter the focal lengths, in mm, of " << LIMIT
+         << " eyepieces:\n";
+    for (int i = 0; i < LIMIT; i++)
+    {
+        cout << "Eyepiece #" << i + 1 << ": ";
+        cin >> eps[i];
+    }
+    file_it(fout, objective, eps, LIMIT);
+    file_it(cout, objective, eps, LIMIT);
+    cout << "Done\n";
+    return 0;
+}
+
+void file_it(ostream & os, double fo, const double fe[], int n)
+{
+    ios_base::fmtflags initial;
+    initial = os.setf(ios_base::fixed); // save initial formatting state
+    os.precision(0);
+    os << "Focal length of objective: " << fo << " mm\n";
+    os.setf(ios::showpoint);
+    os.precision(1);
+    os.width(12);
+    os << "f.1. eyepiece";
+    os.width(15);
+    os << "magnification" << endl;
+    for (int i = 0; i < n; i++)
+    {
+        os.width(12);
+        os << fe[i];
+        os.width(15);
+        os << int (fo/fe[i] + 0.5) << endl;
+    }
+    os.setf(initial);   // restore initial formatting state
+}
+```
 
 3. 方法setf()能够设置各种格式化状态，
    
@@ -604,13 +611,325 @@ void display(const free_throws & ft);// don't allow changes to structure
 5. 默认参数并非编程方面的重大突破，而只是提供了一种便捷的方式。通过使用默认参数，可以减少要定义的析构参数、方法以及方法重载的数量
    
    ```cpp
+   // left.cpp -- string function with a default argument
+   #include<iostream>
+   const int ArSize = 80;
+   char * left(const char * str, int n = 1);
+   int main()
+   {
+       using namespace std;
+       char sample[ArSize];
+       cout << "Enter a string:\n";
+       cin.get(sample, ArSize);
+       char *ps = left(sample, 4);
+       cout << ps << endl;
+       delete []ps;        // free old string
+       ps = left(sample);
+       cout << ps << endl;
+       delete []ps;        // free new string
+       return 0;
+   }
    
+   // This function returns a pointer to a new string
+   // consisting of the first n characters in the str string
+   char * left(const char * str, int n)
+   {
+       if (n < 0)
+           n = 0;
+       char * p = new char[n+1];
+       int i;
+       for (i = 0; i < n && str[i]; i++)
+           p[i] = str[i];  // copy characters
+       while (i <= n)
+           p[i++] = '\0';  // set rest of string to '\0'
+       return p;  
+   }
    ```
 
 ## 函数重载
+
+1. 函数多态是C++在C语言的基础上新增的功能。默认参数能够使用不同数目的参数调用同一个函数，而函数多态（函数重载）能够使用多个同名的函数。
+
+2. 术语“**多态**”指的是有多种形式，因此函数多态允许函数可以有多重形式
+
+3. 术语“**函数重载**”指的是可以有多个同名的函数，因此对名称进行了重载。
+
+4. 这两个术语指的是同一回事，但通常使用函数重载
+
+5. 函数重载来设计一系列函数——完成相同的工作，但是用不同的参数列表
+
+6. 重载函数就像是有多重含义的动词。
+
+7. 函数重载的关键是函数的参数列表——也称为函数特征标（function signature）
+
+8. 若两个函数的参数数目和类型相同，同时参数的排列顺序也相同，则它们的特征标相同，而变量名是无关紧要的。
+
+9. C++允许定义名称相同的函数，条件是它们征标不同
+
+10. 如果参数数目或参数类型不同，则特征标也不同 
+    
+    ```cpp
+    // 定义一组原型如下的print()函数
+    void print(const char * str, int width);    // #1
+    void print(double d, int width);            // #2
+    void print(long l, int width);              // #3
+    void print(int i, int width);               // #4
+    void print(const char * str);               // #5
+    ```
+    
+    + 使用print()函数时，编译器将根据所采取的用法使用有相应特征标的原型：
+    
+    ```cpp
+    print("Pancakes", 15);    // use #1
+    print("Syrup");           // use #5
+    print(1999.0, 10);        // use #2
+    print(1999, 12);          // use #4
+    print(1999L ,15);         // use #3
+    ```
+    
+    + 没有匹配的原型并不会自动停止使用其中的某个该函数，C++将尝试使用标准类型转换强制进行匹配。
+    
+    + 但是若转换的方式不止一种，C++将拒绝这种函数调用，并视其为错误
+
+11. - 一些看起来彼此不同的特征标是不能共存的。
+      
+      ```cpp
+      double cube(double x);
+      double cube(double & x);
+      ```
+    
+    - 从编译器角度考虑，假设
+      
+      ```cpp
+      cout << cube(x);
+      ```
+    
+    - 参数x与doubl x 原型和 double &x原型都匹配，因此编译器无法确定究竟该使用哪个原型。为避免这种混乱，编译器在检查函数特征时，将把类型引用和类型本身视为同一个特征标
+
+12. 匹配函数时，并不区分const和非const变量
+    
+    ```cpp
+    void dribble(char * bits);       // overload
+    void dribble(const char *cbits); // overload
+    void dabble(char * bits);       // overload
+    void drivel(const char * bits); // overload
+    ```
+    
+    下面列出了各种函数调用对应的原型：
+    
+    ```cpp
+    const char p1[20] = "How's the weather?";
+    char p2[20] = "How's business?";
+    dribble(p1);        // dribble (const char *);
+    dribble(p2);        // dribble (char *);
+    dabble(p1);         // no match
+    dabble(p2);         // dabble(char *);
+    drivel(p1);         // drivel(const char *);
+    drivel(p2);         // drivel(const char *)
+    ```
+
+13. 将非const值赋给const变量是合法的，但反之则是非法的
+
+14. Attention！！！是特征标，而不是函数类型使得可以对函数进行重载
+    
+    ```cpp
+    // 下面两个声明是互斥的
+    long gronk(int n, float m);    // same signatures.
+    double gronk(int n, float m);  // hence not allowed
+    ```
+    
+    因此，C++不允许以这种方式重载gronk()。返回类型可以不同，但特征标也必须不同
+    
+    ```cpp
+    long gronk(int n, float m);    // different signature,
+    double gronk(float n,float m); // hence allowed
+    ```
+
+> ## 重载引用参数
+> 
+> 类设计和STL经常使用引用参数，因此知道不同引用类型的重载很有用
+> 
+> + 左值引用参数r1与可修改的左值参数（如double变量）匹配；
+> 
+> + const 左值引用参数r2与可修改的左值参数、const左值参数和右值参数(如两个double值的和)匹配；
+> 
+> + 左值引用参数r3与左值匹配
+> 
+> + 注意到与r1或r3匹配的参数都与r2匹配。如果重载使用这三种参数的函数，结果将调用最匹配的版本
+> 
+> ```cpp
+> void sink(double & r1);      // matches modifiable lvalue
+> void sank(const double & r2);// matches modifiable or const lvalue
+>                              // rvalue
+> void sunk(double && r3);     // matches rvalue   
+> ```
+
+> 根据参数是左值、const还是右值来定制函数
+> 
+> 如果没有定义函数stove(double &&),stove(x+y)将调用函数stove(const double &)
+> 
+> ```cpp
+> double x = 55.5;
+> const double y = 32.0;
+> stove(x);                // calls stove(double &)
+> stove(y);                // calls stove(const double &)
+> stove(x+y);              // calls stove(double &&)
+> ```
+
+### 重载示例
+
+1. 本章前面创建了一个left()函数，它返回一个指针，指向字符串的前n个字符。
+
+2. 下面添加另一个left()函数，它返回整数的前n位。
+   
+   ```cpp
+   // leftover.cpp -- overloading the left() function
+   #include<iostream>
+   unsigned long left(unsigned long num, unsigned ct);
+   char * left(const char * str, int n = 1);
+   
+   int main()
+   {
+       using namespace std;
+       char * trip = "Hawaii!!";   // test value
+       unsigned long n = 12345678; // test value
+       int i;
+       char * temp;
+   
+       for (i = 1; i < 10; i++)
+       {
+           cout << left(n, i) << endl;
+           temp = left(trip, i);
+           cout << temp << endl;
+           delete[] temp; // point to temporary storage
+       }
+       return 0;
+   
+   }
+   // This function return the first ct digits of the number num.
+   unsigned long left(unsigned long num, unsigned ct)
+   {
+       unsigned digits = 1;
+       unsigned long n = num;
+   
+       if (ct == 0 || num == 0)
+           return 0;       // return 0 if no digits
+       while (n /= 10)
+           digits++;
+       if (digits > ct)
+       {
+           ct = digits - ct;
+           while (ct--)
+               num /= 10;
+           return num;     // return left ct digits
+       }
+       else                // if ct >= number of digits
+           return num;     // return the whole number
+   }
+   
+   // This function returns pointer to a new string
+   // consisting of the first n charaters in the str string
+   char * left(const char * str, int n)
+   {
+       if (n < 0)
+           n = 0;
+       char * p = new char[n+1];
+       int i;
+       for (i = 0; i < n && str[i]; i++)
+           p[i] = str[i];  //copy characters
+       while (i <= n)
+           p[i++] = '\0';  // set rest of string to '\0'
+       return p;
+   
+   }
+   ```
+
+
+
+### 何时使用函数重载
+
+1. 仅当函数基本上执行相同的任务，但使用不同形式的数据时，才应采用函数重载。
+
+2. 使用默认参数是否可以实现同样的目的？
+   
+   ```cpp
+   // 可以用两个重载函数来代替面向字符串的left()函数
+   char * left(const char * str, unsigned n);    // two arguments
+   char * left(const char * str);
+   ```
+   
+   使用一个带默认参数的函数要简单些，只需编写一个函数(而不是两个函数)，程序也只需为一个函数（而不是两个）请求内存；需要修改函数时，只需修改一个。然而，如果需要使用不同类型的参数，则默认参数便不管用了，在这种情况下，应该使用函数重载。
+
+> ## 名称修饰
+> 
+> 使用C++开发工具中的编译器编写和编译程序时，C++编译器将执行一些操作—名称修饰（name decoration)或名称矫正（name mangling)，它根据函数原型中指定的形参类型对每个函数名进行加密。
+> 
+> 下述未经修饰的函数原型：
+> 
+> ```cpp
+> long MyFunctionFoo(int, float);
+> ```
+> 
+> 这种格式对于人类来说很适合；我们知道函数接受两个参数（一个为int类型，另一个为float类型），并返回一个long值。而编译器将名称转换为不太好看的内部表示，来描述该接口，如下所示：
+> 
+> ```cpp
+> ?MyFunctionFoo@@YAXH
+> ```
+> 
+> 对原始名称进行的表面看来无意义的修饰（或矫正，因人而异）将对参数数目和类型进行编码。添加的一组符号随函数特征标而异，而修饰时使用的约定随编译器而异
 
 
 
 ## 函数模板
 
-## <mark></mark>
+1. 函数模板是通用的函数描述，它们使用泛型来定义函数，其中的泛型可用具体的类型（如int或double）替换。
+
+2. 通过将类型作为参数传递给模板，可使编译器生成该类型的函数。
+
+3. 由于模板允许以泛型（而不是具体类型）的方法编写程序，因此有时也被称为通用编程；由于类型是用参数表示的，因此模板特性有时也被称为参数化类型（parameterized type)
+
+4. THINK: 定义了一个交换两个int值的函数后，假设要交换两个double值，再交换两个char值，如何实现？以前就只能复制原来的代码，再替换类型。而C++的函数模板功能能自动完成这一过程，可以节省时间，而且更可靠
+
+5. 函数模板允许以任意类型的方式来定义函数，例如，建立一个交换模板：
+   
+   ```cpp
+   template <typename AnyType>
+   void Swap(AnyType &a, AnyType &b)
+   {
+       AnyType temp;
+       temp = a;
+       a = b;
+       b = temp;
+   }
+   // 第一行指出，要建立一个模板，并将类型命名为AnyType。 
+   // 关键字template和typename是必需的，除非可以使用关键字class代替typename
+   // 另外，必须使用尖括号。
+   // 类型名可以任意选择(这里为AnyType),只要遵守C++命名规则即可。常用T
+   // 余下的代码描述了交换两个AnyType值的算法
+   // 模板并不创建任何函数，而只是告诉编译器如何定义函数。
+   // 需要交换int/double/char的函数时，编译器将按模板模式创建这样的函数，
+   // 并用int/double/char代替AnyType
+   ```
+
+6. 在C++98添加关键字typename之前，C++使用关键字class来创建模板
+   
+   ```cpp
+   template <class AnyType>
+   void Swap(AnyType &a, AnyType &b)
+   {
+       AnyType temp;
+       temp = a;
+       a = b;
+       b = temp;
+   }
+   ```
+
+> **提示**： 如果需要多个将同一种算法用于不同类型的函数，请使用模板。
+> 
+> 如果不考虑向后兼容的问题，并愿意键入较长的单词，则声明类型参数时，应使用关键字typename而不使用class
+
+7. 注意，函数模板不能缩短可执行程序。最终的代码不包含任何模板，而只包含了为程序生成的实际函数。使用模板的好处是，它使生成多个函数定义更简单、更可靠
+
+8. 更常见的情形是，将模板放在头文件中，并在需要使用模板的文件中包含头文件
+
+9. 
