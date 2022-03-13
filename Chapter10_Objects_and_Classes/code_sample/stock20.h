@@ -1,6 +1,6 @@
-// stock.h -- Stock class declaration with constructors, destructor added
-#ifndef STOCK10_H_
-#define STOCK10_H_
+// stock20.h -- augmented version
+#ifndef STOCK20_H_
+#define STOCK20_H_
 #include<string>
 
 class Stock
@@ -16,10 +16,11 @@ public:
     // two constructors
     Stock();        // default constructor
     Stock(const std::string & co, long n = 0, double pr = 0.0);
-    ~Stock();       // noisy destructor
+    ~Stock();       // do-nothing destructor
     void buy(long num, double price);
     void sell(long num, double price);
     void update(double price);
-    void show();
+    void show() const;
+    const Stock & topval(const Stock & s) const;
 };
 #endif

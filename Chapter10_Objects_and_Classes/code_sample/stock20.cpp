@@ -1,11 +1,10 @@
-// stock10.cpp -- Stock class with constructor
+// stock20.cpp -- augmented version
 #include<iostream>
-#include"stock10.h"
+#include"stock20.h"
 
 // constructors (verbose version)
-Stock::Stock()      // default constr
+Stock::Stock()      // default constructor
 {
-    std::cout << "Default constructor called\n";
     company = "no name";
     shares = 0;
     share_val = 0.0;
@@ -14,7 +13,6 @@ Stock::Stock()      // default constr
 
 Stock::Stock(const std::string &co, long n, double pr)
 {
-    std::cout << "Constructor using " << co << " called\n";
     company = co;
 
     if (n < 0)
@@ -30,9 +28,8 @@ Stock::Stock(const std::string &co, long n, double pr)
 }
 
 // class destructor
-Stock::~Stock()     // verbose class destructor
+Stock::~Stock()     // quiet class destructor
 {
-    std::cout << "Bye, " << company << "!\n";
 }
 
 // other methods
@@ -59,6 +56,11 @@ void Stock::sell(long num, double price)
         cout << "Number of shares sold can't be negative."
             << "Transaction is aborted.\n";
     }
+    else if (num > shares)
+    {
+        cout << "You can't sell more than you have!"
+            << "Transaction is aborted.\n";
+    }
     else
     {
         shares -= num;
@@ -73,7 +75,7 @@ void Stock::update(double price)
     set_tot();
 }
 
-void Stock::show()
+void Stock::show() const 
 {
     using std::cout;
     using std::ios_base;
@@ -92,4 +94,12 @@ void Stock::show()
     // restore original format
     cout.setf(orig, ios_base::floatfield);
     cout.precision(prec);
+}
+
+const Stock & Stock::topval(const Stock & s) const
+{
+    if (s.total_val > this->total_val)
+        return s;
+    else    
+        return *this;
 }

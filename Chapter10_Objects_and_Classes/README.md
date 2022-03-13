@@ -419,7 +419,7 @@
    // 由于Stock的析构函数不承担任何重要的工作，因此可以将它编写为不执行任何操作的函数：
    Stock::~Stock()
    {
-       
+   
    }
    ```
 
@@ -434,3 +434,284 @@
    + 程序可以创建临时对象来完成特定的操作，在这种情况下，程序将在结束对该对象的使用时自动调用其析构函数。
 
 8. 由于在类对象过期时析构函数将自动被调用，因此必须有一个析构函数。如果 没有提供析构函数，编译器将隐式地声明一个默认析构函数，并在发现导致对象被删除的代码后，提供默认析构函数的定义
+
+9. 允许调用构造函数来创建一个临时对象，然后将该临时对象复制到stock2中，并丢弃它。如果编译器使用这种方式，则将为临时对象调用析构函数
+
+10. 可以将一个对象赋给同类型的另一个对象。在默认情况下，将一个对象赋给同类型的另一个对象时，C++将源对象的每个数数据成员的内容复制到目标对象中相应的数据成员中。
+
+11. 构造函数不仅仅可以用于初始化新对象，而是将新值赋给它。通过让构造程序创建一个新的、临时的对象，然后将其内容复制来实现的。随后调用析构函数，以删除该临时对象
+    
+    > 提示：如果既可以通过初始化，也可以通过复制来设置对象的值，则应采用初始化方式
+
+12. C++11列表初始化
+    
+    可以用于类，只要提供与某个构造函数的参数列表匹配的内容，并用大括号将它们括起：
+    
+    ```cpp
+    Stock hot_tip = {"Derivatives Plus Plus", 100, 45.0};
+    Stock jock {"Sport Age Storage, Inc"};
+    Stock temp{};
+    // 前两个声明中，用大括号括起的列表与下面的构造函数匹配
+    Stock(const std::string & co, long n = 0, double pr = 0.0);
+    // 创建对象jock时，第二和第三个参数将为默认值0和0.0
+    // 第三个声明与默认构造函数匹配，因此将使用该构造函数创建对象temp
+    ```
+
+13. C++11提供了名为 **std::initialize_list**  的类，可将其用作函数参数或方法参数都相同或可转换为相同的类型
+
+14. const 成员函数
+    
+    ```cpp
+    const Stock land = Stock("Kludgehron Properties");
+    land.show();
+    
+    // 对于当前的C++来说，编译器将拒绝第二行
+    // 因为show()的代码无法确保调用函数不被修改——调用对象和const一样，不应被修改
+    // show()没有任何参数。它所使用的的对象是由方法调用隐式地提供
+    // 保证函数不会修改调用对象。C++解决方法是将const关键字放在函数的括号后面
+    void show() const; // promises not to change invoking object
+    // 函数定义的开头应像这样
+    void stock::show() const // promises not to change invoking object
+    
+    ```
+
+15. 构造函数是一种特殊的类成员函数，在创建类对象时被调用。构造函数的名称和类名相同，但通过函数重载，可以创建多个同名的构造函数，条件是 每个函数的特征标（参数列表）都不同。
+
+16. 接受一个参数的构造函数允许使用复制语法将对象初始化为一个值
+
+
+
+
+
+## this 指针
+
+1. this指针指向用来调用成员函数的对象（this被作为隐藏参数传递给函数）.
+
+2. 一般来说，所有的类函数都将this指针设置为它的对象的地址
+   
+   > ### 注意：
+   > 
+   > 每个成员函数（包括构造函数和析构函数）都有一个this指针。this指针指向调用对象。如果函数需要引用整个调用对象，则可以使用表达式*this.
+   > 
+   > 在函数的括号后面使用const限定符将this限定为const,则不用使用this修改对象的值
+   > 
+   > 要返回的并不是this，因为this是对象的地址，而是对象本身，即*this（将解除引用运算符\*用于指针，将得到指针指向的值
+
+
+
+## 对象数组
+
+1. 用户通常要创建同一个类的多个对象。可以创建独立对象变量，创建数组更合适。声明对象数组的方法和声明标准类型数组相同：
+   
+   ```cpp
+   Stock mystuff[4];    // create am array of 4 Stock object
+   ```
+
+2. 当程序创建未被显式初始化的类对象时，总是调用默认构造函数。上述声明，这个类要么没有显式地定义任何构造函数（这种情况下，将使用不执行任何操作的隐式默认构造函数），要么定义了一个显式默认构造函数。每个元素（mystuff[0]、mystuff[1]）都是Stock对象 ，可以用Stock函数：
+   
+   ```cpp
+   mystuff[0].update();    // apply update() to 1st element
+   mystuff[3].show();      // apply update() to 4th element
+   const Stock * tops = mystuff[2].topval(mystuff[1]);
+   // compare 3rd and 2nd elements and set tops
+   // to point at the one with a higher total value
+   ```
+
+3. 可以用构造函数来初始化数组元素，在这种情况下，必须为每个元素调用构造函数：
+   
+   ```cpp
+   const int STKS = 4;
+   Stock stocks[STKS] = {
+       Stock("NanoSmart", 12.5, 20),
+       Stock("Boff Objects", 200, 2.0).
+       Stock("Monolithic Obelisks", 130, 3.25),
+       Stock("Fleep Enterprises", 60, 6.5)
+   };
+   
+   // 使用标准格式对数组进行初始化：用括号括起的、以逗号分割的值列表
+   ```
+
+4. 每次构造函数调用表示一个值。如果类包含多个构造函数，则可以对不同的元素使用不同的构造函数：
+   
+   ```cpp
+   const int STKS = 10;
+   Stock stock[STKS] = {
+       Stock("NanoSmart", 12.5, 20),
+       Stock(),
+       Stock("Monolithic Obelisks", 130, 3.25),
+   };
+   ```
+
+5. 声明若只初始化了数组的部分元素，余下的元素将使用默认构造函数进行初始化
+
+6. 最初的UNIX实现C++前端cfront将C++转换为C程序
+   
+   ```cpp
+   void Stock::show() const
+   {
+       cout << "Company: " << company
+           << " Shares: " << shares << '\n'
+           << " Shares Price: $" << share_val 
+           << "  Total Worth: $" << total_val << '\n';
+   }
+   
+   // 转换为下面的C-style 定义：
+   void show(const Stock * this)
+   {
+       cout << "Company: " << this->company
+            << "  Shares: " << this->shares << '\n'
+            << "  Share Price: $" << this->share_val
+            << "  Total Worth: $" << this->total_val << '\n';
+   }
+   // 即将Stock::限定符转换为函数参数（指向Stock的指针），然后用这个指针来访问类成员
+   // 同样，
+   top.show();
+   // 转换为：
+   show(&top);
+   ```
+
+## 类作用域
+
+1. 在类中定义的名称（如类数据成员名和类成员函数名）的作用域都为整个类，作用域为整个类的名称只在该类中是已知的，在类外是不可知的。因此，可以在不同类中使用相同的类成员名而不会引起冲突
+
+2. 类作用域意味着不能从外部直接访问类的成员，公有成员函数也是如此。要调用公有成员函数吗，必须通过对象：
+   
+   ```cpp
+   
+   Stock sleeper("Exclusive Ore", 100, 0.25);// create object
+   
+   sleeper.show();        // Use object to invoke a member function
+   
+   show();                // invalid--can't call method directly
+   ```
+
+3. 同样，在定义成员函数时，必须使用作用域解析运算符
+   
+   ```cpp
+   void Stock::update(double price)
+   {
+       ...
+   }
+   ```
+
+4. 在类声明或成员函数定义中，可以使用未修饰的成员名称(未限定的名称)。构造函数名称在被调用时，才能被识别，因为它的名称和类名相同。
+
+5. 在其他情况下，使用类成员名时，必须根据上下文使用直接成员运算符（.）、间接成员运算符（->) 或作用域解析运算符（）
+
+### 作用域为类的常量
+
+1. 在类声明你们中直接定义是行不通的，因为声明类只是描述了对象的形式，并没有创建对象，在创建对象钱，将没有用于存储值的空间
+   
+   ```cpp
+   class Bakery
+   {
+   private:
+       const int Months = 12;    // declare a constant? FAILS
+       double costs[Months];
+       ...
+   }
+   ```
+
+2. 有两种方式可以实现使符号常量的作用域为类
+   
+   - 在类中声明一个枚举。在类声明的枚举的作用域为整个类，可以用枚举为整型常量提供作用域为整个类的符号名称
+     
+     ```cpp
+     class Bakery
+     {
+     private:
+       enum { Months = 12};
+       double costs[Months];
+       ...
+     };
+     // 用这种方式声明枚举并不会创建类数据成员
+     // 所有对象中都不包含枚举
+     ```
+   
+   - 使用关键字static
+     
+     ```cpp
+     class Bakery
+     {
+     private:
+       static const int Months = 12;
+       double costs[Months];
+       ...
+     };
+     // 将创建一个名为Months的常量，该常量将与其他静态变量存储在一起
+     // 而不是存储在对象中，被所有Barkey对象共享
+     // C++11才允许存储double常量
+     ```
+
+### 作用域内枚举（C++11)
+
+1. - 传统枚举存在问题,两个枚举定义中的枚举两可能发生冲突
+     
+     ```cpp
+     enum egg {Small, Medium, Large, Jumbo};
+     enum t_shirt {Small, Medium, Large, Xlarge};
+     ```
+   
+   - C++11提供新枚举，其枚举量的作用域为类
+     
+     ```cpp
+     enum class egg {Small, Medium, Large, Jumbo};
+     enum class t_shirt {Small, Medium, Large, Xlarge};
+     // 也可以用关键字struct代替class、
+     // 无论哪种方式都需要枚举名来限定枚举量
+     egg choice = egg::Large; // the Large enumerator of the egg enum
+     t_shirt Floyd = t_shirt::Large;// the Large enumerator 
+                                   // of the egg enum
+     ```
+   
+   - 枚举量的作用域为类后，不同枚举定义中的枚举量就不会发生名称冲突
+   
+   - C++11 还提高了作用域内枚举的类型安全。在有些情况下，常规枚举将自动转换为整型，如将其赋给int变量或用于比较表达式时，但作用域内枚举不能隐式地转换为整型：
+     
+     ```cpp
+     enum egg_old {Small, Medium, Large, Jumbo};// unscoped
+     enum class t_shirt {Small, Medium, Large, Xlarge};// scoped
+     egg_old one = Medium;                      // unscoped
+     t_shirt rolf = t_shirt::Large;             // scoped
+     int king = one;   // implicit type conversion for unscopes
+     int ring = rolf;// not allowed, no implicit type conversuib
+     if (king < Jumbp)    // allowed
+       std::cout << "Jumbo converted to int before comparison.\n";
+     if (king < t_shirt::Medium)    // not allowed
+       std::cout << "Not allowed: < not defined for scoped enum.\n";
+     ```
+   
+   - 在必要时，可进行显式类型转换
+     
+     ```cpp
+     int Frobo = int(t_shirt::Small);    // Frobo set to 0
+     ```
+   
+   - 默认情况下，C++11作用域内枚举的底层类型为int
+     
+     ```cpp
+     // underlying type for pizza is short
+     enum class:short pizza {Small, Medium, Large, Xlarge};
+     // :short将底层类型指定为short。
+     // 底层类型必须为整型
+     ```
+
+## 抽象数据类型
+
+1. 程序员常常通过定义类来表示更通用的概念-抽象数据类型（abstruct data type,ADT)
+
+2. ADT以通用的方式描述数据类型，而没有引入语言或实现细节。通过使用栈，可以以这样的方式存储数据，即总是从堆顶添加或删除数据。
+
+3. C++程序使用栈来管理自动变量。当新的自动变量被生成后，它们被添加到堆顶；消亡时，从栈中删除它们。
+
+4. 栈的特征——栈存储了多个数据项（该特征是的栈称为一个容器—一种更通用的抽象）；其次·，栈由可对它执行的操作来描述
+   
+   + 可创建空栈
+   
+   + 可将数据项添加到堆顶（压入）
+   
+   + 可从栈顶删除数据项（弹出）
+   
+   + 可查看栈是否填满
+   
+   + 可查看栈是否为空
